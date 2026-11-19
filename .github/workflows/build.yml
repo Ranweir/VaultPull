@@ -1,0 +1,30 @@
+name: Build
+
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Extract zip
+        run: unzip -o vaultpull.zip -d extracted
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install
+        run: pip install ./extracted/vaultpull
+
+      - name: Syntax check
+        run: python -m py_compile extracted/vaultpull/vaultpull/cli.py
+
+      - name: Upload extracted project
+        uses: actions/upload-artifact@v4
+        with:
+          name: vaultpull
+          path: extracted/vaultpull
